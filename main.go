@@ -11,7 +11,11 @@ var clients = make(map[*websocket.Conn]bool) // Connected clients
 var broadcast = make(chan Message)           // Broadcast channel
 
 // Configure the upgrader
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 // Message object
 type Message struct {
@@ -46,11 +50,12 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	// Close the connection
+	// Close the connection when the function returns
 	defer ws.Close()
 
 	// Register the client
 	clients[ws] = true
+	log.Printf("New connection")
 
 	for {
 		var msg Message
@@ -61,6 +66,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			delete(clients, ws)
 			break
 		}
+
+		log.Printf("New message")
 
 		// Send the newly receive message to the broadcast channel
 		broadcast <- msg
