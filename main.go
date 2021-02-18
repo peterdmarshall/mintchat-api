@@ -19,9 +19,10 @@ var upgrader = websocket.Upgrader{
 
 // Message object
 type Message struct {
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Message  string `json:"message"`
+	Email     string `json:"email"`
+	Username  string `json:"username"`
+	Message   string `json:"message"`
+	Timestamp string `json:"timestamp"`
 }
 
 func main() {
